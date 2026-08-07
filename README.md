@@ -118,36 +118,7 @@ npm run dev
 
 ---
 
-## 2–3 Minute Demo Video Script
 
-**Title**: *NaijaPrep E-Learning Quiz Platform Walkthrough*  
-**Duration**: 2:30  
-**Target Audience**: Students, Educators, and Evaluators
-
-### Script Breakdown
-
-#### **0:00 – 0:30 | Introduction & Problem Statement**
-- *"Hello everyone! Secondary and tertiary students in Nigeria often lack accessible, localized practice tools for standard examinations like JAMB/UTME, WAEC, and Post-UTME."*
-- *"Welcome to **NaijaPrep**, a lightweight, mobile-responsive E-Learning Quiz Platform built with React, Node.js, Express, and PostgreSQL."*
-
-#### **0:30 – 1:00 | User Authentication & Registration**
-- *"Let's begin on the home screen. New students can register with their username, email, and password. Existing students log in securely via JWT authentication."*
-- *(Action: Click 'Sign Up', create a test account, and land on the Student Dashboard).*
-
-#### **1:00 – 1:45 | Dashboard & Timed Quiz Session**
-- *"On the Dashboard, students see their performance metrics—completed quizzes, average score, and past attempt history."*
-- *"Notice the available practice quizzes grouped by subjects like **Mathematics** and **English**."*
-- *"Let's select 'JAMB Mathematics Foundation'. Notice the sticky session timer countdown at the top with a live progress bar. Answers are selected via intuitive A–D radio buttons."*
-- *(Action: Select answers for all 5 math questions and click 'Submit Quiz Answers').*
-
-#### **1:45 – 2:15 | Instant Results & Detailed Review**
-- *"Upon submission, answers are evaluated server-side to guarantee integrity. The client receives a full breakdown: total score, percentage badge, and question-by-question review showing the student's answer vs. the correct answer."*
-- *"Returning to the dashboard, our performance stats and attempt history update instantly!"*
-
-#### **2:15 – 2:30 | Conclusion & Deployment Summary**
-- *"NaijaPrep is production-ready for deployment on Vercel and Render with PostgreSQL. Thank you for watching!"*
-
----
 
 ## License
 MIT License. Open source for educational use.
