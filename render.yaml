@@ -1,0 +1,20 @@
+services:
+  # Single Web Service – Express serves both the REST API and the built React app
+  - type: web
+    name: naijaprep-backend
+    runtime: node
+    rootDir: backend
+    # 1. Install backend deps, then build the React frontend (output → backend/public)
+    buildCommand: npm install && npm run build
+    # 2. Start the Express server (serves API + React static files)
+    startCommand: node src/index.js
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false          # Paste your DB connection string in the Render dashboard
+      - key: JWT_SECRET
+        generateValue: true  # Render auto-generates a secure random secret
+      - key: FRONTEND_URL
+        sync: false          # Optional – your custom domain if you add one later

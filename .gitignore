@@ -1,0 +1,11 @@
+node_modules/
+.env
+frontend/.env
+backend/.env
+.DS_Store
+
+# Ignore the local Vite dist output (frontend dev build)
+frontend/dist/
+
+# NOTE: backend/public is intentionally NOT ignored.
+# It is generated during the Render build step and served by Express.

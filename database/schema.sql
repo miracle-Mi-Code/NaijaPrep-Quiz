@@ -1,0 +1,36 @@
+DROP TABLE IF EXISTS attempts;
+DROP TABLE IF EXISTS questions;
+DROP TABLE IF EXISTS quizzes;
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(100) NOT NULL UNIQUE,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE quizzes (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  subject VARCHAR(100) NOT NULL,
+  duration_minutes INTEGER NOT NULL CHECK (duration_minutes > 0)
+);
+
+CREATE TABLE questions (
+  id SERIAL PRIMARY KEY,
+  quiz_id INTEGER NOT NULL REFERENCES quizzes(id) ON DELETE CASCADE,
+  question_text TEXT NOT NULL,
+  options JSONB NOT NULL,
+  correct_option TEXT NOT NULL
+);
+
+CREATE TABLE attempts (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  quiz_id INTEGER NOT NULL REFERENCES quizzes(id) ON DELETE CASCADE,
+  score INTEGER NOT NULL,
+  total_questions INTEGER NOT NULL,
+  completed_at TIMESTAMPTZ DEFAULT NOW()
+);
