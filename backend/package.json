@@ -1,5 +1,5 @@
 {
-    "name": "e-learning-backend",
+    "name": "NaijaPrep-backend",
     "version": "1.0.0",
     "description": "REST API for the e-learning quiz platform",
     "main": "src/index.js",
