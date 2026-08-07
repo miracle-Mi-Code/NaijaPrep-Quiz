@@ -47,11 +47,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/users', userRoutes);
 
-// ── Serve React frontend in production ────────────────────────────────────────
+// ── Serve React frontend (check for public directory first) ────────────────
 const publicDir = path.join(__dirname, '..', 'public');
+const hasFrontend = fs.existsSync(publicDir) && fs.existsSync(path.join(publicDir, 'index.html'));
 
-if (isProduction && fs.existsSync(publicDir)) {
-    console.log(`Serving static files from: ${publicDir}`);
+if (hasFrontend) {
+    console.log(`✅ Serving React frontend from: ${publicDir}`);
     // Serve static assets (JS, CSS, images)
     app.use(express.static(publicDir));
 
@@ -59,20 +60,18 @@ if (isProduction && fs.existsSync(publicDir)) {
     app.get('*', (req, res) => {
         res.sendFile(path.join(publicDir, 'index.html'));
     });
-} else if (isProduction && !fs.existsSync(publicDir)) {
-    console.warn(`⚠️  WARNING: Public directory not found at ${publicDir}`);
-    console.warn('The frontend build may have failed. Serving API only.');
-    // Development root – just a hint
-    app.get('/', (_req, res) => {
-        res.json({
-            message: 'NaijaPrep API running. Frontend not available.',
-            warning: 'Public directory not found. Check build logs.'
-        });
-    });
 } else {
-    // Development root – just a hint
+    console.warn(`⚠️  WARNING: Frontend not found. Public directory: ${publicDir}`);
+    console.warn('The frontend build may have failed or the public/ folder is missing.');
+
+    // Fallback: serve API only with error message
     app.get('/', (_req, res) => {
-        res.json({ message: 'NaijaPrep API running. Frontend served separately in dev mode.' });
+        res.status(503).json({
+            error: 'Frontend application not available',
+            message: 'The frontend build failed or was not deployed.',
+            api_status: 'API is operational. Use /api/health to check.',
+            hint: 'Check Render build logs.'
+        });
     });
 }
 
