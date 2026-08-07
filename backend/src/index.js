@@ -51,12 +51,23 @@ app.use('/api/users', userRoutes);
 const publicDir = path.join(__dirname, '..', 'public');
 
 if (isProduction && fs.existsSync(publicDir)) {
+    console.log(`Serving static files from: ${publicDir}`);
     // Serve static assets (JS, CSS, images)
     app.use(express.static(publicDir));
 
     // SPA fallback – every non-API route serves index.html so React Router works
     app.get('*', (req, res) => {
         res.sendFile(path.join(publicDir, 'index.html'));
+    });
+} else if (isProduction && !fs.existsSync(publicDir)) {
+    console.warn(`⚠️  WARNING: Public directory not found at ${publicDir}`);
+    console.warn('The frontend build may have failed. Serving API only.');
+    // Development root – just a hint
+    app.get('/', (_req, res) => {
+        res.json({
+            message: 'NaijaPrep API running. Frontend not available.',
+            warning: 'Public directory not found. Check build logs.'
+        });
     });
 } else {
     // Development root – just a hint
