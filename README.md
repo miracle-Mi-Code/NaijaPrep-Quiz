@@ -56,12 +56,7 @@ cd backend
 npm install
 ```
 
-Create a `.env` file in `backend/`:
-```env
-PORT=5000
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/e_learning_app
-JWT_SECRET=naijaprep_super_secret_jwt_key_2026
-```
+
 
 Start the API server:
 ```bash
