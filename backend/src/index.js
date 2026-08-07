@@ -1,3 +1,7 @@
+if (process.env.RENDER || (process.env.PORT && process.env.NODE_ENV === undefined)) {
+    process.env.NODE_ENV = 'production';
+}
+
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -15,8 +19,6 @@ const PORT = process.env.PORT || 5000;
 const isProduction = process.env.NODE_ENV === 'production';
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
-// In production the frontend is served by this same Express server, so CORS
-// is only needed for local development (separate Vite dev server on port 3000).
 const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:5173',
@@ -26,9 +28,7 @@ const allowedOrigins = [
 app.use(
     cors({
         origin: (origin, callback) => {
-            if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
-            // In production, same-origin requests have no Origin header – allow them
-            if (isProduction) return callback(null, true);
+            if (!origin || allowedOrigins.includes(origin) || isProduction) return callback(null, true);
             callback(new Error(`CORS: origin ${origin} is not allowed`));
         },
         credentials: true,
@@ -53,18 +53,24 @@ const hasFrontend = fs.existsSync(publicDir) && fs.existsSync(path.join(publicDi
 
 if (hasFrontend) {
     console.log(`✅ Serving React frontend from: ${publicDir}`);
-    // Serve static assets (JS, CSS, images)
-    app.use(express.static(publicDir));
+    // Serve static assets (JS, CSS, images) with caching
+    app.use(express.static(publicDir, { maxAge: '1d' }));
 
-    // SPA fallback – every non-API route serves index.html so React Router works
-    app.get('*', (req, res) => {
+    // SPA fallback – every non-API page route serves index.html so React Router works.
+    // BUT if an asset with an extension (e.g. .js, .css, .ico) is missing, return 404 instead of index.html
+    app.get('*', (req, res, next) => {
+        if (req.path.startsWith('/api')) {
+            return res.status(404).json({ message: 'API route not found' });
+        }
+        if (path.extname(req.path)) {
+            return res.status(404).send('Asset not found');
+        }
         res.sendFile(path.join(publicDir, 'index.html'));
     });
 } else {
     console.warn(`⚠️  WARNING: Frontend not found. Public directory: ${publicDir}`);
     console.warn('The frontend build may have failed or the public/ folder is missing.');
 
-    // Fallback: serve API only with error message
     app.get('/', (_req, res) => {
         res.status(503).json({
             error: 'Frontend application not available',

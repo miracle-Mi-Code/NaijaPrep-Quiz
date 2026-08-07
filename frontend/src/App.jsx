@@ -8,8 +8,28 @@ import { api } from './services/api';
 import { useQuizTimer } from './hooks/useQuizTimer';
 
 export default function App() {
-  const [token, setToken] = useState(localStorage.getItem('token') || '');
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user') || 'null'));
+  const [token, setToken] = useState(() => {
+    try {
+      return localStorage.getItem('token') || '';
+    } catch {
+      return '';
+    }
+  });
+
+  const [user, setUser] = useState(() => {
+    try {
+      const storedUser = localStorage.getItem('user');
+      if (!storedUser || storedUser === 'undefined') return null;
+      return JSON.parse(storedUser);
+    } catch (e) {
+      console.warn('Clearing invalid user data from localStorage:', e);
+      try {
+        localStorage.removeItem('user');
+      } catch {}
+      return null;
+    }
+  });
+
   const [quizzes, setQuizzes] = useState({});
   const [dashboard, setDashboard] = useState(null);
 
